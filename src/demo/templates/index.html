@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+{% if user.is_authenticated %}
+<p>blbl</p>
+{% else %}
+<h1>Click link to verify</h1>
+<ol>
+    <li><a href="{% url 'create_user_get' %}">Create user</a></li>
+    <li>Click link received in email</li>
+    <li><a href="{% url 'login' %}">Log in</a></li>
+</ol>
+<h1>Click link to get to verify-page, then verify</h1>
+<ol>
+    <li><a href="{% url 'create_user_post' %}">Create user</a></li>
+    <li>Click link received in email</li>
+    <li>Click <b>Activate</b> on the page</li>
+    <li><a href="{% url 'login' %}">Log in</a></li>
+</ol>
+<h1>Click link to get to verify-page, fill in form, then verify</h1>
+<ol>
+    <li><a href="{% url 'create_user_post_password' %}">Create user</a></li>
+    <li>Click link received in email</li>
+    <li>fill in passwords then click <b>Activate</b> on the page</li>
+    <li><a href="{% url 'login' %}">Log in</a></li>
+</ol>
+{% endif %}
+{% endblock content %}

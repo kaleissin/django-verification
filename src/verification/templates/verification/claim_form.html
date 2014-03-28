@@ -1,0 +1,9 @@
+{% extends 'verification/base.html' %}
+{% block content %}
+<form action="." method="post">
+    {% csrf_token %}
+    <p>By clicking on the <b>Activate></b>-button below I hereby verify that I received an email with the key {{ key.key }}:</p>
+    {{ form.as_p }}
+    <input type="submit" value="Activate"/>
+</form>
+{% endblock content %}

@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Demo of the verification app</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+<p>You are logged in as {{ user.username }}. 
+<a href="{% url 'logout' %}">Logout</a>
+<a href="{% url 'delete_user' %}">Delete your user</a>
+</p>{% endif %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% block content %}
+{% endblock content %}
+<p><a href="/">Home</a></p>
+</body>
+</html>

@@ -1,0 +1,10 @@
+*.pyc
+*.pyo
+*.sqp
+*.sqlite
+*~
+.coverage
+htmlcov
+.tox
+*.egg-info
+dist
