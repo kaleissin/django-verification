@@ -263,6 +263,13 @@ class KeyTest(TestCase):
         self.assertEqual(k.key, 'Aa1txnLk')
         self.assertEqual(k.group, self.kg_sms)
 
+    def test_generate_with_fact(self):
+        fact = 'this is a test'
+        k = Key.generate(group=self.kg_sms, seed=12345, fact=fact)
+        self.assertEqual(k.key, 'Aa1txnLk')
+        self.assertEqual(k.group, self.kg_sms)
+        self.assertEqual(k.fact, fact)
+
 class ClaimTest(TestCase):
 
     def setUp(self):

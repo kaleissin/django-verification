@@ -174,12 +174,14 @@ class AbstractKey(models.Model):
             raise ValidationError('This key must have a fact but none is provided')
 
     @classmethod
-    def generate(cls, group, seed=None, *args):
+    def generate(cls, group, seed=None, fact=None, *args):
         "Generate and return a new key"
         Generator = group.get_generator()
         generator = Generator(seed=seed)
         keystring = generator.generate_one_key(*args)
         key = Key(group=group, key=keystring)
+        if fact:
+            key.fact = fact
         key.save()
         return key
 
