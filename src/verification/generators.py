@@ -161,7 +161,10 @@ class Registry(object):
         return self._generators.keys()
 
     def get(self, generator, fallback=None):
-        return self._generators.get(generator, fallback)
+        generator = self._generators.get(generator, fallback)
+        if generator == fallback and fallback is None:
+            raise GeneratorError('Invalid generator')
+        return generator
 
     def reset(self):
         reset()

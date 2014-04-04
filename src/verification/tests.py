@@ -12,6 +12,7 @@ from verification.models import *
 from verification.views import *
 from verification.generators import (
     Registry,
+    GeneratorError,
     SMSKeyGenerator,
     AbstractKeyGenerator,
     AbstractAlphabetKeyGenerator,
@@ -51,7 +52,7 @@ class RegistryTest(TestCase):
         registry = Registry()
         registry.register('abstract', AbstractKeyGenerator)
         registry.unregister('abstract')
-        self.assertIsNone(registry.get('abstract'))
+        self.assertRaises(GeneratorError, registry.get, 'abstract')
         self.assertFalse(registry.get('abstract', False))
 
     def test_reset(self):
@@ -103,7 +104,7 @@ class AbstractKeyGeneratorTest(TestCase):
         registry = Registry()
         self.assertEqual(registry.get('abstract'), gen)
         gen.unregister()
-        self.assertIsNone(registry.get('abstract'))
+        self.assertRaises(GeneratorError, registry.get, 'abstract')
 
 class AbstractAlphabetKeyGeneratorTest(TestCase):
 
