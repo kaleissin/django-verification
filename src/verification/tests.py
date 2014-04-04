@@ -159,6 +159,20 @@ class KeyGroupTest(TestCase):
         kg = KeyGroup.objects.create(name='test2', generator='doesnotexist')
         self.assertIsNone(kg.get_generator())
 
+    def test_purge_keys(self):
+        kg1 = KeyGroup.objects.create(name='test1', generator='sms')
+        kg2 = KeyGroup.objects.create(name='test2', generator='pin')
+        model = kg1.key_set.model
+        for i in range(5):
+            model.generate(kg1)
+        for i in range(5):
+            model.generate(kg2)
+        self.assertEqual(model.objects.count(), 10)
+        kg1.purge_keys()
+        self.assertEqual(set(model.objects.all()),
+                         set(model.objects.filter(group=kg2)))
+        self.assertEqual(model.objects.count(), 5)
+
 class KeyTest(TestCase):
 
     def setUp(self):

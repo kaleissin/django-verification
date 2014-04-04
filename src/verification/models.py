@@ -97,6 +97,12 @@ class KeyGroup(models.Model):
         if self.generator in generators.available():
             return generators.get(self.generator)
 
+    def purge_keys(self):
+        "Delete all keys belonging to this group"
+        model = self.key_set.model
+        model.objects.filter(group=self).delete()
+
+
 @python_2_unicode_compatible
 class AbstractKey(models.Model):
     """
