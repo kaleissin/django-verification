@@ -12,7 +12,10 @@ import string
 SAFE_ALPHABET = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789+-'
 SHORT_LENGTH = 8
 
-__all__ = ['Registry']
+__all__ = ['Registry', 'GeneratorError']
+
+class GeneratorError(Exception):
+    pass
 
 class AbstractKeyGenerator(object):
     """Do not use directly."""
