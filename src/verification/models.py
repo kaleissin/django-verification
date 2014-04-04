@@ -102,6 +102,17 @@ class KeyGroup(models.Model):
         model = self.key_set.model
         model.objects.filter(group=self).delete()
 
+    def generate_one_key(self, keycls, seed=None, fact=None, *args):
+        "Generate and return a new key of class <keycls>"
+        Generator = self.get_generator()
+        generator = Generator(seed=seed)
+        keystring = generator.generate_one_key(*args)
+        key = keycls(group=self, key=keystring)
+        if fact:
+            key.fact = fact
+        key.save()
+        return key
+
 
 @python_2_unicode_compatible
 class AbstractKey(models.Model):
@@ -182,13 +193,7 @@ class AbstractKey(models.Model):
     @classmethod
     def generate(cls, group, seed=None, fact=None, *args):
         "Generate and return a new key"
-        Generator = group.get_generator()
-        generator = Generator(seed=seed)
-        keystring = generator.generate_one_key(*args)
-        key = Key(group=group, key=keystring)
-        if fact:
-            key.fact = fact
-        key.save()
+        key = group.generate_one_key(cls, seed, fact, *args)
         return key
 
     def claim(self, user):

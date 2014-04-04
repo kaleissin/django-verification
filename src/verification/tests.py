@@ -175,6 +175,16 @@ class KeyGroupTest(TestCase):
                          set(model.objects.filter(group=self.kg_pin)))
         self.assertEqual(model.objects.count(), 5)
 
+    def test_generate_one_key(self):
+        k = self.kg_sms.generate_one_key(Key, seed=12345)
+        self.assertEqual(k.key, 'Aa1txnLk')
+
+    def test_generate_one_key_with_fact(self):
+        fact = 'this is a test'
+        k = self.kg_sms.generate_one_key(Key, seed=12345, fact=fact)
+        self.assertEqual(k.key, 'Aa1txnLk')
+        self.assertEqual(k.fact, fact)
+
 class KeyTest(TestCase):
 
     def setUp(self):
