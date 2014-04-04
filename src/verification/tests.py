@@ -98,7 +98,7 @@ class AbstractKeyGeneratorTest(TestCase):
         registry = Registry()
         self.assertEqual(registry.get('abstract'), gen)
 
-    def test_register(self):
+    def test_unregister(self):
         gen = AbstractKeyGenerator()
         gen.register()
         registry = Registry()
