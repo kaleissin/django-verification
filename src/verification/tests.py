@@ -289,3 +289,12 @@ class ClaimTest(TestCase):
         earlier = now - datetime.timedelta(minutes=5+random.randint(0, 200))
         k1 = Key.objects.create(key='1', group=self.kg, expires=earlier)
         self.assertRaises(VerificationError, claim, '1', self.user)
+
+class AdminTest(TestCase):
+
+    def test_all_defined(self):
+        try:
+            import verification.admin
+            from verification.admin import *
+        except (NameError, AssertionError) as e:
+            self.fail(e)

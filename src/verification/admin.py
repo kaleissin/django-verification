@@ -10,5 +10,9 @@ class KeyAdmin(admin.ModelAdmin):
     list_filter = ('group', 'claimed_by')
     date_hierarchy = 'pub_date'
 
+class KeyGroupAdmin(admin.ModelAdmin):
+    model = KeyGroup
+    list_display = ('name', 'ttl', 'has_fact')
+
 admin.site.register(Key, KeyAdmin)
 admin.site.register(KeyGroup, KeyGroupAdmin)

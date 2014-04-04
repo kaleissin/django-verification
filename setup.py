@@ -10,7 +10,7 @@ finally:
     README_FILE.close()
 
 setup(name='django-verification',
-        version='0.1',
+        version='0.1.1',
         packages=['verification'],
         package_dir = {'': 'src',},
         include_package_data=True,
@@ -19,6 +19,7 @@ setup(name='django-verification',
         description='Generalized app for two-step verification',
         author_email='kaleissin@gmail.com',
         author='kaleissin',
+        url='https://github.com/kaleissin/django-verification',
         long_description=long_description,
         classifiers=[
                 'Development Status :: 4 - Beta',
