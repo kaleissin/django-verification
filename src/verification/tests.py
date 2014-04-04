@@ -150,28 +150,29 @@ class HashedHexKeyGeneratorTest(TestCase):
 
 class KeyGroupTest(TestCase):
 
+    def setUp(self):
+        self.kg_sms = KeyGroup.objects.create(name='test1', generator='sms')
+        self.kg_pin = KeyGroup.objects.create(name='test2', generator='pin')
+
     def test_str(self):
         kg = KeyGroup.objects.create(name='test')
         self.assertEqual(str(kg), 'test')
 
     def test_get_generator(self):
-        kg = KeyGroup.objects.create(name='test1', generator='sms')
-        self.assertEqual(kg.get_generator(), SMSKeyGenerator)
-        kg = KeyGroup.objects.create(name='test2', generator='doesnotexist')
+        self.assertEqual(self.kg_sms.get_generator(), SMSKeyGenerator)
+        kg = KeyGroup.objects.create(name='test3', generator='doesnotexist')
         self.assertIsNone(kg.get_generator())
 
     def test_purge_keys(self):
-        kg1 = KeyGroup.objects.create(name='test1', generator='sms')
-        kg2 = KeyGroup.objects.create(name='test2', generator='pin')
-        model = kg1.key_set.model
+        model = self.kg_sms.key_set.model
         for i in range(5):
-            model.generate(kg1)
+            model.generate(self.kg_sms)
         for i in range(5):
-            model.generate(kg2)
+            model.generate(self.kg_pin)
         self.assertEqual(model.objects.count(), 10)
-        kg1.purge_keys()
+        self.kg_sms.purge_keys()
         self.assertEqual(set(model.objects.all()),
-                         set(model.objects.filter(group=kg2)))
+                         set(model.objects.filter(group=self.kg_pin)))
         self.assertEqual(model.objects.count(), 5)
 
 class KeyTest(TestCase):
@@ -317,6 +318,5 @@ class AdminTest(TestCase):
     def test_all_defined(self):
         try:
             import verification.admin
-            from verification.admin import *
         except (NameError, AssertionError) as e:
             self.fail(e)
