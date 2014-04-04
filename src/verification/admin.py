@@ -13,6 +13,7 @@ class KeyAdmin(admin.ModelAdmin):
 class KeyGroupAdmin(admin.ModelAdmin):
     model = KeyGroup
     list_display = ('name', 'ttl', 'has_fact')
+    list_filter = ('has_fact',)
 
 admin.site.register(Key, KeyAdmin)
 admin.site.register(KeyGroup, KeyGroupAdmin)
