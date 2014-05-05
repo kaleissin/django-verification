@@ -24,7 +24,7 @@ MEDIA_URL = "/media/"
 
 # These are for site static media (e.g. CSS and JS)
 # This one is where static content is collected to.
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "static_root")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "static-root")
 STATIC_URL = "/static/"
 ADMIN_MEDIA_PREFIX = "/static/admin/"
 STATICFILES_DIRS = [
