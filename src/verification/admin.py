@@ -24,7 +24,7 @@ class KeyAdmin(admin.ModelAdmin):
     model = Key
     list_display = ('key', 'group', 'pub_date', 'claimed_by', 'expires')
     list_filter = ('group', ClaimedListFilter)
-    search_fields = ('claimed_by__username', 'claimed_by__email')
+    search_fields = ('key', 'claimed_by__username', 'claimed_by__email')
     date_hierarchy = 'pub_date'
 
 class KeyGroupAdmin(admin.ModelAdmin):
