@@ -4,10 +4,26 @@ from django.contrib import admin
 
 from .models import Key, KeyGroup
 
+class ClaimedListFilter(admin.SimpleListFilter):
+    title = 'Claimed'
+    parameter_name = 'claimed_by'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Yes':
+            return queryset.exclude(claimed_by=None)
+        if self.value() == 'No':
+            return queryset.filter(claimed_by=None)
+
 class KeyAdmin(admin.ModelAdmin):
     model = Key
     list_display = ('key', 'group', 'pub_date', 'claimed_by', 'expires')
-    list_filter = ('group',)
+    list_filter = ('group', ClaimedListFilter)
     search_fields = ('claimed_by__username', 'claimed_by__email')
     date_hierarchy = 'pub_date'
 
