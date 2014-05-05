@@ -1,6 +1,6 @@
 *.pyc
 *.pyo
-*.sqp
+*.swp
 *.sqlite
 *~
 .coverage
