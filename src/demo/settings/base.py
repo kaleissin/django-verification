@@ -26,7 +26,6 @@ MEDIA_URL = "/media/"
 # This one is where static content is collected to.
 STATIC_ROOT = os.path.join(PROJECT_ROOT, "static-root")
 STATIC_URL = "/static/"
-ADMIN_MEDIA_PREFIX = "/static/admin/"
 STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, "static"),
 ]
@@ -73,6 +72,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.auth',
     'django.contrib.messages',
+
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
 
     'verification',
     'demo.projectapp',
