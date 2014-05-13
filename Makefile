@@ -59,6 +59,7 @@ compare:
 clean:
 	find . -name "*.pyc" -print0 | xargs -0 rm -rf
 	find . -name "*.egg-info" -print0 | xargs -0 rm -rf
+	-rm -rf demo.sqlite
 	-rm -rf htmlcov
 	-rm -rf .coverage
 	-rm -rf build
@@ -96,7 +97,10 @@ virtualenv:
 load_demo_fixtures:
 	$(PYTHON_BIN)/django-admin.py loaddata $(PYTHONPATH)/$(PROJECT)/fixtures/example.json $(DJANGO_POSTFIX)
 
-demo: virtual_env_set pip syncdb load_demo_fixtures runserver_unsafe
+demodatabase: clean virtual_env_set
+	$(PYTHON_BIN)/django-admin.py syncdb --noinput $(DJANGO_POSTFIX)
+
+demo: virtual_env_set pip demodatabase load_demo_fixtures runserver_unsafe
 
 runserver_unsafe:
 	$(PYTHON_BIN)/django-admin.py runserver --insecure $(DJANGO_POSTFIX)
