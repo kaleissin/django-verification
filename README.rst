@@ -29,9 +29,11 @@ virtualenv, then provided you are on some Un*x::
 
     make demo
 
-This'll ask you to make an admin user. Do so.
+This'll automatically make a user "admin" with the password "demo".
 
 The demo should now be running on http://127.0.0.1/
+
+Running `make demo` again will erase the database from the previous run.
 
 Tests
 =====
@@ -110,4 +112,4 @@ Hook the ``key_claimed``-signal in order to do something after the key is claime
         claimant.is_active = True
         claimant.save()
 
-:Version: 0.1.3
+:Version: 0.1.4
