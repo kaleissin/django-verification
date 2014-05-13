@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.views.generic.base import ContextMixin
-from django.views.generic import TemplateView, FormView, DetailView, View
+from django.views.generic import TemplateView, FormView, View
 from django.shortcuts import render, get_object_or_404
 
 from verification.models import Key, KeyGroup, VerificationError
@@ -18,6 +18,8 @@ class ClaimContextMixin(object):
     model = Key
 
     def get_key_arg(self):
+        """Look for the KeyGroup in the url, post args or get args.
+        No fallback."""
         urlkey = self.kwargs.get('key', '')
         if not urlkey:
             urlkey = self.request.POST.get('key', '')
@@ -26,6 +28,8 @@ class ClaimContextMixin(object):
         return urlkey
 
     def get_group_arg(self):
+        """Look for the KeyGroup in the url, post args or get args.
+        Falls back to the `default_group` set on the class."""
         urlgroup = self.kwargs.get('group', '')
         if not urlgroup:
             urlgroup = self.request.POST.get('group', '')
@@ -117,10 +121,7 @@ class AbstractClaimOnPostFormView(ClaimMixin, FormView):
     def form_valid(self, form):
         return self._claim()
 
-class ClaimSuccessView(ClaimContextMixin, DetailView):
+class ClaimSuccessView(ClaimContextMixin, TemplateView):
     template_name = 'verification/success.html'
     http_method_names = ['get', 'head', 'options', 'trace']
-
-    def get_queryset(self):
-        self.model.objects.filter
 claim_success = ClaimSuccessView.as_view()
