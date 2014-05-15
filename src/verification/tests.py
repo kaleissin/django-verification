@@ -5,9 +5,11 @@ import hashlib
 import datetime
 import unittest
 
+from django.core.urlresolvers import resolve, reverse
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django import test
+from django.http import HttpRequest
 
 from verification.models import *
 from verification.views import *
@@ -331,3 +333,27 @@ class AdminTest(unittest.TestCase):
             import verification.admin
         except (NameError, AssertionError) as e:
             self.fail(e)
+
+class ClaimSuccessViewTest(test.TestCase):
+
+    def setUp(self):
+        self.kg = KeyGroup.objects.create(name='sms')
+        self.k = Key.objects.create(key='blabla', group=self.kg)
+        self.factory = test.RequestFactory()
+
+    def test_find_view(self):
+        kwargs = {
+            'key': self.k.key,
+            'group': self.kg.name
+        }
+        found = resolve(reverse('verification-success', kwargs=kwargs))
+        self.assertEqual(found.func, claim_success)
+
+    def test_not500(self):
+        kwargs = {
+            'key': self.k.key,
+            'group': self.kg.name
+        }
+        request = self.factory.get(reverse('verification-success', kwargs=kwargs))
+        response = claim_success(request, **kwargs)
+        self.assertNotEqual(response.status_code, 500)
