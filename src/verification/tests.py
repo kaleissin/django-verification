@@ -6,7 +6,7 @@ import datetime
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django import test
 
 from verification.models import *
 from verification.views import *
@@ -22,7 +22,7 @@ from verification.generators import (
     SHORT_LENGTH,
 )
 
-class RegistryTest(TestCase):
+class RegistryTest(test.TestCase):
 
     def setUp(self):
         registry = Registry()
@@ -64,7 +64,7 @@ class RegistryTest(TestCase):
         registry.reset()
         self.assertEqual(set(registry.available()), set(expected))
 
-class AbstractKeyGeneratorTest(TestCase):
+class AbstractKeyGeneratorTest(test.TestCase):
 
     def tearDown(self):
         registry = Registry()
@@ -106,7 +106,7 @@ class AbstractKeyGeneratorTest(TestCase):
         gen.unregister()
         self.assertRaises(GeneratorError, registry.get, 'abstract')
 
-class AbstractAlphabetKeyGeneratorTest(TestCase):
+class AbstractAlphabetKeyGeneratorTest(test.TestCase):
 
     def test_init(self):
         gen = AbstractAlphabetKeyGenerator()
@@ -129,7 +129,7 @@ class AbstractAlphabetKeyGeneratorTest(TestCase):
         key = gen.generate_one_key()
         self.assertEqual(expected_key, key)
 
-class HashedHexKeyGeneratorTest(TestCase):
+class HashedHexKeyGeneratorTest(test.TestCase):
 
     def test_init(self):
         gen = HashedHexKeyGenerator()
@@ -148,7 +148,7 @@ class HashedHexKeyGeneratorTest(TestCase):
         expected_key = '98397f5b411802bac598c3f0a19cd7c3063461ca'
         self.assertEqual(expected_key, key)
 
-class KeyGroupTest(TestCase):
+class KeyGroupTest(test.TestCase):
 
     def setUp(self):
         self.kg_sms = KeyGroup.objects.create(name='test1', generator='sms')
@@ -185,7 +185,7 @@ class KeyGroupTest(TestCase):
         self.assertEqual(k.key, 'Aa1txnLk')
         self.assertEqual(k.fact, fact)
 
-class KeyTest(TestCase):
+class KeyTest(test.TestCase):
 
     def setUp(self):
         self.kg_sms = KeyGroup.objects.create(name='sms', generator='sms')
@@ -296,7 +296,7 @@ class KeyTest(TestCase):
         self.assertEqual(k.group, self.kg_sms)
         self.assertEqual(k.fact, fact)
 
-class ClaimTest(TestCase):
+class ClaimTest(test.TestCase):
 
     def setUp(self):
         self.kg = KeyGroup.objects.create(name='sms')
@@ -323,7 +323,7 @@ class ClaimTest(TestCase):
         k1 = Key.objects.create(key='1', group=self.kg, expires=earlier)
         self.assertRaises(VerificationError, claim, '1', self.user)
 
-class AdminTest(TestCase):
+class AdminTest(test.TestCase):
 
     def test_all_defined(self):
         try:
