@@ -1,27 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
+
 {% if user.is_authenticated %}
-<p>blbl</p>
-{% else %}
-<h1>Click link to verify</h1>
+<p>You are logged in</p>
+{% endif %}
+
+<h1>Magic links</h1>
+
+<p>Every link is unique and contain enough information to look up the key. The
+key is not meant to be inputted manually, therefore it can be as long and
+complex as you wish.</p>
+
+<h2>Click magic link to verify</h2>
 <ol>
     <li><a href="{% url 'create_user_get' %}">Create user</a></li>
     <li>Click link received in email</li>
     <li><a href="{% url 'login' %}">Log in</a></li>
 </ol>
-<h1>Click link to get to verify-page, then verify</h1>
+
+<h2>Click magic link to get to verify-page, then verify</h2>
 <ol>
     <li><a href="{% url 'create_user_post' %}">Create user</a></li>
     <li>Click link received in email</li>
     <li>Click <b>Activate</b> on the page</li>
     <li><a href="{% url 'login' %}">Log in</a></li>
 </ol>
-<h1>Click link to get to verify-page, fill in form, then verify</h1>
+
+<h2>Click magic link to get to verify-page, fill in form, then verify</h2>
 <ol>
     <li><a href="{% url 'create_user_post_password' %}">Create user</a></li>
     <li>Click link received in email</li>
     <li>fill in passwords then click <b>Activate</b> on the page</li>
     <li><a href="{% url 'login' %}">Log in</a></li>
 </ol>
-{% endif %}
 {% endblock content %}
