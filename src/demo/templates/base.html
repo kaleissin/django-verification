@@ -1,13 +1,40 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Demo of the verification app</title>
+    <meta charset="utf-8" />
+    <style>
+        nav {
+            margin: 0;
+            padding: 0;
+            background: #111111;
+            color: #ffffff;
+            border: 1px solid black;
+        }
+        nav li {
+            margin: 0;
+            display:inline; 
+            padding: 1em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        nav li a { color: #ffffff; }
+        nav li a:visited { color: #dddddd; }
+        main { margin: 1em; }
+    </style>
 </head>
 <body>
-{% if user.is_authenticated %}
-<p>You are logged in as {{ user.username }}. 
-<a href="{% url 'logout' %}">Logout</a>
-<a href="{% url 'delete_user' %}">Delete your user</a>
-</p>{% endif %}
+<nav>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/admin/">Django Admin</a></li>
+        {% if user.is_authenticated %}
+        <li>You are logged in as {{ user.username }}.
+        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'delete_user' %}">Delete your user</a>
+        </li>{% endif %}
+    </ul>
+</nav>
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -15,8 +42,9 @@
     {% endfor %}
 </ul>
 {% endif %}
+<main>
 {% block content %}
 {% endblock content %}
-<p><a href="/">Home</a></p>
+</main>
 </body>
 </html>
