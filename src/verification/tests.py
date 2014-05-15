@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import random
 import hashlib
 import datetime
+import unittest
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -22,7 +23,7 @@ from verification.generators import (
     SHORT_LENGTH,
 )
 
-class RegistryTest(test.TestCase):
+class RegistryTest(unittest.TestCase):
 
     def setUp(self):
         registry = Registry()
@@ -64,7 +65,7 @@ class RegistryTest(test.TestCase):
         registry.reset()
         self.assertEqual(set(registry.available()), set(expected))
 
-class AbstractKeyGeneratorTest(test.TestCase):
+class AbstractKeyGeneratorTest(unittest.TestCase):
 
     def tearDown(self):
         registry = Registry()
@@ -106,7 +107,7 @@ class AbstractKeyGeneratorTest(test.TestCase):
         gen.unregister()
         self.assertRaises(GeneratorError, registry.get, 'abstract')
 
-class AbstractAlphabetKeyGeneratorTest(test.TestCase):
+class AbstractAlphabetKeyGeneratorTest(unittest.TestCase):
 
     def test_init(self):
         gen = AbstractAlphabetKeyGenerator()
@@ -129,7 +130,7 @@ class AbstractAlphabetKeyGeneratorTest(test.TestCase):
         key = gen.generate_one_key()
         self.assertEqual(expected_key, key)
 
-class HashedHexKeyGeneratorTest(test.TestCase):
+class HashedHexKeyGeneratorTest(unittest.TestCase):
 
     def test_init(self):
         gen = HashedHexKeyGenerator()
@@ -323,7 +324,7 @@ class ClaimTest(test.TestCase):
         k1 = Key.objects.create(key='1', group=self.kg, expires=earlier)
         self.assertRaises(VerificationError, claim, '1', self.user)
 
-class AdminTest(test.TestCase):
+class AdminTest(unittest.TestCase):
 
     def test_all_defined(self):
         try:
