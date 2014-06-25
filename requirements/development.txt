@@ -1,3 +1,4 @@
 -r base.txt
 
+ipython
 django-debug-toolbar
