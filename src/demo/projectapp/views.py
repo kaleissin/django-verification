@@ -66,7 +66,11 @@ at {create_url} on the
 {creation_timestamp}.
 
 If this was not you you can ignore this email.'''
-    email = None
+    email = '''You can complete the process by clicking on
+
+    {activate_url}
+
+The link times out in one hour.'''
 
     def set_message(self, **kwargs):
         """Use messages.info(self.request, self.message % kwargs)"""
@@ -120,7 +124,6 @@ class CreateUserOnGet(AbstractCreateUser):
     will contain a link. Click on the link to activate the account. You can
     then <a href="">log in with your email-address as username</a>. The
     password is "demo".'''
-    email = '''You can complete the process by clicking on {activate_url}. The link times out in one hour'''
     activate_url = 'verification-claim-get'
 
     def set_message(self, **kwargs):
@@ -143,7 +146,6 @@ class CreateUserOnPost(AbstractCreateUser):
     <b>Activate</b>-button to activate the account. You can then <a href="">log
     in with your email-address as username</a>. The password is "demo".'''
     activate_url = 'verification-claim-post-url'
-    email = '''You can complete the process by clicking on {activate_url}. The link times out in one hour'''
 
     def set_message(self, **kwargs):
         assert 'email' in kwargs
@@ -166,7 +168,6 @@ class CreateUserOnPostWPassword(AbstractCreateUser):
     href="">log in with your email-address as username</a>. The password is
     "demo".'''
     activate_url = 'demo-claim-postform'
-    email = '''You can complete the process by clicking on {activate_url}. The link times out in one hour'''
 
     def set_message(self, **kwargs):
         assert 'email' in kwargs
