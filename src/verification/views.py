@@ -12,6 +12,7 @@ from django.views.generic import TemplateView, FormView, View
 from django.shortcuts import render, get_object_or_404
 
 from verification.models import Key, KeyGroup, VerificationError
+from verification.forms import LookupKeyForm
 
 class KeyLookupMixin(object):
     model = Key
@@ -122,6 +123,26 @@ class AbstractClaimOnPostFormView(UrlClaimMixin, FormView):
 
     def form_valid(self, form):
         return self._claim()
+
+class AbstractClaimView(ClaimMixin, FormView):
+    model = Key
+    form_class = LookupKeyForm
+    template_name = 'verification/claim_key.html'
+
+    def get_queryset(self):
+        """Limit to available Keys of specified KeyGroup"""
+        if not self.keygroup:
+            raise ImproperlyConfigured("Keygroup not set")
+        return self.model._default_manager.available().filter(group=self.keygroup)
+
+    def form_valid(self, form):
+        keystring = form.cleaned_data['key']
+        self.kwargs = {
+            'key': keystring,
+            'group': self.keygroup
+        }
+        key = self.claim(keystring, self.keygroup)
+        return HttpResponseRedirect(self.get_success_url())
 
 class ClaimSuccessView(ClaimContextMixin, TemplateView):
     template_name = 'verification/success.html'

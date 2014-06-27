@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from verification.signals import key_claimed
 from verification.models import KeyGroup, Key
 from verification.views import AbstractClaimOnPostFormView
+from verification.views import AbstractClaimView
 
 activate_account, _ = KeyGroup.objects.get_or_create(
     name='activate_account',
@@ -175,6 +176,29 @@ class ClaimOnPostFormView(AbstractClaimOnPostFormView):
         user.save()
         return next
 claim_post_form = ClaimOnPostFormView.as_view()
+
+class CreateUser(AbstractCreateUser):
+    message = '''You will shortly receive an email from
+    <b>noreply@example.com</b> to the address you gave, which was <b>{email}</b>.
+    It will contain a key and a link. <a href="{activate_url}">Activate the url</a>
+    by filling in the form with the key to activate the account. You can
+    then <a href="{create_url}">log in with your email-address as username</a>. The
+    password is "demo".'''
+    email = '''Your key is
+
+    {key}
+
+You can complete the process by visiting {activate_url}
+and fill in the key in the form there. The key times out in one hour.'''
+    activate_url = 'demo-claim'
+
+    def generate_activate_url(self, **_):
+        return super(CreateUser, self).generate_activate_url()
+create_user = CreateUser.as_view()
+
+class ClaimView(AbstractClaimView):
+    keygroup = 'activate_account'
+claim = ClaimView.as_view()
 
 #-- signals
 

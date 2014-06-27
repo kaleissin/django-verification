@@ -33,4 +33,20 @@ complex as you wish.</p>
     <li>fill in passwords then click <b>Activate</b> on the page</li>
     <li><a href="{% url 'login' %}">Log in</a></li>
 </ol>
+
+<h1>Non-magic links</h1>
+
+<p>The link need not contain any information. Useful for keys distributed on
+paper, or in text-messages when you can't assume that the recipient has a smart
+phone. Make the keys shorter, as they need to be manually
+inputted. SMSGenerator, PinGenerator etc.</p>
+
+<h2>Click non-magic link, fill in key, then verify</h2>
+<ol>
+    <li><a href="{% url 'create_user' %}">Create user</a></li>
+    <li>Click link received in email</li>
+    <li>Fill in key then click <b>Activate</b> on the page</li>
+    <li><a href="{% url 'login' %}">Log in</a></li>
+</ol>
+
 {% endblock content %}
