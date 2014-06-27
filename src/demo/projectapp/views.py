@@ -61,8 +61,11 @@ class AbstractCreateUser(CreateView):
     activate_url = None
     message = ''
     disclaimer = '''You have received this email because you, or someone who
-    knows your email-address, attempted to create a user at {create_url} on the
-    {creation_timestamp}. If this was not you you can ignore this email.'''
+knows your email-address, attempted to create a user
+at {create_url} on the
+{creation_timestamp}.
+
+If this was not you you can ignore this email.'''
     email = None
 
     def set_message(self, **kwargs):
