@@ -72,9 +72,12 @@ If this was not you you can ignore this email.'''
 
 The link times out in one hour.'''
 
-    def set_message(self, **kwargs):
-        """Use messages.info(self.request, self.message % kwargs)"""
-        raise NotImplemented
+    def set_message(self, email, **kwargs):
+        args = {'email': email,
+                  'create_url': self.generate_create_url(),
+                  'activate_url': self.generate_activate_url(**kwargs)
+        }
+        messages.info(self.request, self.message.format(**args))
 
     def generate_activate_url(self, **kwargs):
         if not kwargs:
@@ -115,21 +118,16 @@ The link times out in one hour.'''
         key.save()
         self.key = key
         self.send_key()
-        self.set_message(email=email)
+        self.set_message(email=email, key=key.key, group=key.group.name)
         return next
 
 class CreateUserOnGet(AbstractCreateUser):
     message = '''You will shortly receive an email from
-    <b>noreply@example.com</b> to the address you gave, which was <b>%s</b>. It
-    will contain a link. Click on the link to activate the account. You can
-    then <a href="">log in with your email-address as username</a>. The
+    <b>noreply@example.com</b> to the address you gave, which was <b>{email}</b>.
+    It will contain a link. Click on the link to activate the account. You can
+    then <a href="{create_url}">log in with your email-address as username</a>. The
     password is "demo".'''
     activate_url = 'verification-claim-get'
-
-    def set_message(self, **kwargs):
-        assert 'email' in kwargs
-        email = kwargs['email']
-        messages.info(self.request, self.message % email)
 
     def form_valid(self, form):
         next = super(CreateUserOnGet, self).form_valid(form)
@@ -141,16 +139,11 @@ create_user_get = CreateUserOnGet.as_view()
 
 class CreateUserOnPost(AbstractCreateUser):
     message = '''You will shortly receive an email from
-    <b>noreply@example.com</b> to the address you gave, which was <b>%s</b>. It
-    will contain a link. Click on the link, then click on the
-    <b>Activate</b>-button to activate the account. You can then <a href="">log
+    <b>noreply@example.com</b> to the address you gave, which was <b>{email}</b>.
+    It will contain a link. Click on the link, then click on the
+    <b>Activate</b>-button to activate the account. You can then <a href="{create_url}">log
     in with your email-address as username</a>. The password is "demo".'''
     activate_url = 'verification-claim-post-url'
-
-    def set_message(self, **kwargs):
-        assert 'email' in kwargs
-        email = kwargs['email']
-        messages.info(self.request, self.message % email)
 
     def form_valid(self, form):
         next = super(CreateUserOnPost, self).form_valid(form)
@@ -162,17 +155,12 @@ create_user_post = CreateUserOnPost.as_view()
 
 class CreateUserOnPostWPassword(AbstractCreateUser):
     message = '''You will shortly receive an email from
-    <b>noreply@example.com</b> to the address you gave, which was <b>%s</b>. It
-    will contain a link. Click on the link, fill in the password and click on
+    <b>noreply@example.com</b> to the address you gave, which was <b>{email}</b>.
+    It will contain a link. Click on the link, fill in the password and click on
     the <b>Activate</b>-button to activate the account. You can then <a
-    href="">log in with your email-address as username</a>. The password is
+    href="{create_url}">log in with your email-address as username</a>. The password is
     "demo".'''
     activate_url = 'demo-claim-postform'
-
-    def set_message(self, **kwargs):
-        assert 'email' in kwargs
-        email = kwargs['email']
-        messages.info(self.request, self.message % email)
 create_user_post_password = CreateUserOnPostWPassword.as_view()
 
 class ClaimOnPostFormView(AbstractClaimOnPostFormView):
