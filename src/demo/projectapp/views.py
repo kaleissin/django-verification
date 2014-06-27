@@ -69,17 +69,29 @@ class AbstractCreateUser(CreateView):
         """Use messages.info(self.request, self.message % kwargs)"""
         raise NotImplemented
 
+    def generate_activate_url(self, **kwargs):
+        if not kwargs:
+            kwargs={}
+        path = reverse(self.activate_url, kwargs=kwargs)
+        return self.request.build_absolute_uri(path)
+
+    def generate_create_url(self, **kwargs):
+        if not kwargs:
+            kwargs={}
+        path = reverse(self.create_url, kwargs=kwargs)
+        return self.request.build_absolute_uri(path)
+
     def send_key(self):
         assert self.create_url and self.activate_url, (self.create_url, self.activate_url)
         mail_body = self.disclaimer + '\n\n' + self.email
         key = self.key
-        create_url = reverse(self.create_url)
-        activate_url = self.activate_url
-        activate_url = reverse(self.activate_url, kwargs={'key': key.key, 'group': key.group.name})
+        create_url = self.generate_create_url()
+        activate_url = self.generate_activate_url(key=key.key, group=key.group.name)
         key.send_key(self.object.email, mail_body.format(
-                create_url=self.request.build_absolute_uri(create_url),
+                create_url=create_url,
                 creation_timestamp=self.object.date_joined,
-                activate_url=self.request.build_absolute_uri(activate_url),
+                activate_url=activate_url,
+                key=self.key.key,
             )
         )
 
