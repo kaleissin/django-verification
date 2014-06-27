@@ -100,7 +100,9 @@ load_demo_fixtures:
 demodatabase: clean virtual_env_set
 	$(PYTHON_BIN)/django-admin.py syncdb --noinput $(DJANGO_POSTFIX)
 
-demo: virtual_env_set pip demodatabase load_demo_fixtures runserver_unsafe
+resetdemodatabase: demodatabase load_demo_fixtures
+
+demo: virtual_env_set pip resetdemodatabase runserver_unsafe
 
 runserver_unsafe:
 	$(PYTHON_BIN)/django-admin.py runserver --insecure $(DJANGO_POSTFIX)
