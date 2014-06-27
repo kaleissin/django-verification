@@ -13,12 +13,26 @@ from django.shortcuts import render, get_object_or_404
 
 from verification.models import Key, KeyGroup, VerificationError
 
-class ClaimContextMixin(object):
-    default_group = ''
+class KeyLookupMixin(object):
     model = Key
+    keygroup = ''
+
+    def get_group_from_string(self, group=''):
+        self.group = get_object_or_404(KeyGroup, name=group)
+        return self.group
+
+    def get_key_from_string(self, key, group=''):
+        group = self.get_group_from_string(group if group else self.keygroup)
+        self.key = get_object_or_404(self.model, key=key, group=group)
+        return self.key
+
+
+class ClaimContextMixin(KeyLookupMixin, ContextMixin):
+    """Gets key and group from context:
+    First checks url, then POST args, then GET args"""
 
     def get_key_arg(self):
-        """Look for the KeyGroup in the url, post args or get args.
+        """Look for the Key in the url, post args or get args.
         No fallback."""
         urlkey = self.kwargs.get('key', '')
         if not urlkey:
@@ -29,43 +43,30 @@ class ClaimContextMixin(object):
 
     def get_group_arg(self):
         """Look for the KeyGroup in the url, post args or get args.
-        Falls back to the `default_group` set on the class."""
+        Falls back to the `keygroup` set on the class."""
         urlgroup = self.kwargs.get('group', '')
         if not urlgroup:
             urlgroup = self.request.POST.get('group', '')
         if not urlgroup:
             urlgroup = self.request.GET.get('group', '')
         if not urlgroup:
-            urlgroup = self.default_group
+            urlgroup = self.keygroup
         return urlgroup
-
-    def get_group(self, group=''):
-        self.group = get_object_or_404(KeyGroup, name=group)
-        return self.group
-
-    def get_key(self, key, group=''):
-        group = self.get_group(group)
-        self.key = get_object_or_404(self.model, key=key, group=group)
-        return self.key
-
-    def foo(self):
-        keyarg = self.get_key_arg()
-        grouparg = self.get_group_arg()
-        key = self.get_key(key=keyarg, group=grouparg)
-        return key
 
     def get_context_data(self, **kwargs):
         context = super(ClaimContextMixin, self).get_context_data(**kwargs)
-        key = self.foo()
+        keyarg = self.get_key_arg()
+        grouparg = self.get_group_arg()
+        key = self.get_key_from_string(key=keyarg, group=grouparg)
         context['key'] = key
         context['group'] = key.group
         return context
 
-class ClaimMixin(ClaimContextMixin, ContextMixin):
+class ClaimMixin(KeyLookupMixin):
     success_url = 'verification-success'
 
     def claim(self, key, group=''):
-        key = self.get_key(key, group if group else self.group)
+        key = self.get_key_from_string(key, group)
         group = key.group
         user = self.request.user
         if user.is_authenticated() and user.is_active:
@@ -86,6 +87,7 @@ class ClaimMixin(ClaimContextMixin, ContextMixin):
             return url
         raise ImproperlyConfigured('No URL to redirect to. Provide a success_url.')
 
+class UrlClaimMixin(ClaimMixin, ClaimContextMixin):
     def _claim(self):
         key = self.get_key_arg()
         group = self.get_group_arg()
@@ -93,28 +95,28 @@ class ClaimMixin(ClaimContextMixin, ContextMixin):
         url = self.get_success_url()
         return HttpResponseRedirect(url)
 
-class ClaimOnGetMixin(object):
+class ClaimOnGetMixin(UrlClaimMixin):
 
     def get(self, request, *args, **kwargs):
         return self._claim()
 
-class ClaimOnPostMixin(object):
+class ClaimOnPostMixin(UrlClaimMixin):
 
     def post(self, request, *args, **kwargs):
         return self._claim()
 
-class ClaimOnGetView(ClaimOnGetMixin, ClaimMixin, View):
+class ClaimOnGetView(ClaimOnGetMixin, View):
     """Claim a key for a logged-in user by visiting a "magic" url"""
     http_method_names = ['get', 'head', 'options', 'trace'] 
 claim_get = ClaimOnGetView.as_view()
 
-class ClaimOnPostUrlView(ClaimOnPostMixin, ClaimMixin, TemplateView):
+class ClaimOnPostUrlView(ClaimOnPostMixin, TemplateView):
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
     template_name = 'verification/claim_verify.html'
 claim_post_url = ClaimOnPostUrlView.as_view()
 
-class AbstractClaimOnPostFormView(ClaimMixin, FormView):
-    """Inherit and set form_class. Expects "key" and group" either as kwargs or as fields on the form."""
+class AbstractClaimOnPostFormView(UrlClaimMixin, FormView):
+    """Inherit and set form_class. Expects "key" and group" as kwargs."""
     http_method_names = ['get', 'post', 'head', 'options', 'trace']
     template_name = 'verification/claim_form.html'
 
