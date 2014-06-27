@@ -8,7 +8,7 @@ PYTHONPATH := $(LOCALPATH)
 SETTINGS := production
 DJANGO_SETTINGS_MODULE = $(PROJECT).settings.$(SETTINGS)
 DJANGO_POSTFIX := --settings=$(DJANGO_SETTINGS_MODULE) --pythonpath=.$(PYTHONPATH)
-LOCAL_SETTINGS := local
+LOCAL_SETTINGS := development
 DJANGO_LOCAL_SETTINGS_MODULE = $(PROJECT).settings.$(LOCAL_SETTINGS)
 DJANGO_LOCAL_POSTFIX := --settings=$(DJANGO_LOCAL_SETTINGS_MODULE) --pythonpath=$(PYTHONPATH)
 TEST_SETTINGS := test
@@ -105,7 +105,7 @@ resetdemodatabase: demodatabase load_demo_fixtures
 demo: virtual_env_set pip resetdemodatabase runserver_unsafe
 
 runserver_unsafe:
-	$(PYTHON_BIN)/django-admin.py runserver --insecure $(DJANGO_POSTFIX)
+	$(PYTHON_BIN)/django-admin.py runserver --insecure $(DJANGO_LOCAL_POSTFIX)
 
 all: collectstatic refresh
 
