@@ -10,7 +10,7 @@ finally:
     README_FILE.close()
 
 setup(name='django-verification',
-        version='0.1.4',
+        version='0.2.0',
         packages=['verification'],
         package_dir = {'': 'src',},
         include_package_data=True,
