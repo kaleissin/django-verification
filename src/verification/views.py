@@ -27,11 +27,7 @@ class KeyLookupMixin(object):
         self.key = get_object_or_404(self.model, key=key, group=group)
         return self.key
 
-
-class ClaimContextMixin(KeyLookupMixin, ContextMixin):
-    """Gets key and group from context:
-    First checks url, then POST args, then GET args"""
-
+class LookupMixin(object):
     def get_key_arg(self):
         """Look for the Key in the url, post args or get args.
         No fallback."""
@@ -53,6 +49,10 @@ class ClaimContextMixin(KeyLookupMixin, ContextMixin):
         if not urlgroup:
             urlgroup = self.keygroup
         return urlgroup
+
+class ClaimContextMixin(KeyLookupMixin, LookupMixin, ContextMixin):
+    """Gets key and group from context:
+    First checks url, then POST args, then GET args"""
 
     def get_context_data(self, **kwargs):
         context = super(ClaimContextMixin, self).get_context_data(**kwargs)
@@ -108,7 +108,7 @@ class ClaimOnPostMixin(UrlClaimMixin):
 
 class ClaimOnGetView(ClaimOnGetMixin, View):
     """Claim a key for a logged-in user by visiting a "magic" url"""
-    http_method_names = ['get', 'head', 'options', 'trace'] 
+    http_method_names = ['get', 'head', 'options', 'trace']
 claim_get = ClaimOnGetView.as_view()
 
 class ClaimOnPostUrlView(ClaimOnPostMixin, TemplateView):
