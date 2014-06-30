@@ -3,13 +3,12 @@ from __future__ import unicode_literals
 import logging
 _LOG = logging.getLogger(__name__)
 
-from django.http import HttpResponseRedirect, Http404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin
 from django.views.generic import TemplateView, FormView, View
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 from verification.models import Key, KeyGroup, VerificationError
 from verification.forms import LookupKeyForm
@@ -27,7 +26,10 @@ class KeyLookupMixin(object):
         self.key = get_object_or_404(self.model, key=key, group=group)
         return self.key
 
-class LookupMixin(object):
+class ArgLookupMixin(object):
+    """Gets key and group from request:
+    First checks url, then POST args, then GET args"""
+
     def get_key_arg(self):
         """Look for the Key in the url, post args or get args.
         No fallback."""
@@ -50,9 +52,8 @@ class LookupMixin(object):
             urlgroup = self.keygroup
         return urlgroup
 
-class ClaimContextMixin(KeyLookupMixin, LookupMixin, ContextMixin):
-    """Gets key and group from context:
-    First checks url, then POST args, then GET args"""
+class ClaimContextMixin(KeyLookupMixin, ArgLookupMixin, ContextMixin):
+    """Adds key and group to context"""
 
     def get_context_data(self, **kwargs):
         context = super(ClaimContextMixin, self).get_context_data(**kwargs)
@@ -141,7 +142,7 @@ class AbstractClaimView(ClaimMixin, FormView):
             'key': keystring,
             'group': self.keygroup
         }
-        key = self.claim(keystring, self.keygroup)
+        self.claim(keystring, self.keygroup)
         return HttpResponseRedirect(self.get_success_url())
 
 class ClaimSuccessView(ClaimContextMixin, TemplateView):
