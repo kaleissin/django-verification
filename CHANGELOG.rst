@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Release 0.3
+-----------
+
+Even bigger class hierarchy. ClaimContextMixin inherits from the new mixin,
+ArgLookupMixin, so nothing should break.
+
+Renames/moves:
+
+- ClaimContextMixin.get_key_arg() -> ArgLookupMixin.get_key_arg()
+- ClaimContextMixin.get_group_arg() -> ArgLookupMixin.get_group_arg()
+
 Release 0.2
 -----------
 
