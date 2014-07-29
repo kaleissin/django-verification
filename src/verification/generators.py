@@ -31,10 +31,10 @@ class AbstractKeyGenerator(object):
             self.random.seed(self.seed)
 
     def generate_one_key(self, *args):
-        raise NotImplemented
+        raise NotImplementedError
 
     def valid_key(self, key):
-        raise NotImplemented
+        raise NotImplementedError
 
     def sms_safe(self):
         return True if self.length <= 10 else False
@@ -81,7 +81,7 @@ class PINCodeGenerator(AbstractAlphabetKeyGenerator):
     alphabet = '0123456789'
     length = 4
 
-class UsernameKeyGenerator(AbstractKeyGenerator):
+class UsernameKeyGenerator(AbstractAlphabetKeyGenerator):
     name = 'username'
     alphabet = string.ascii_letters + string.digits
 
