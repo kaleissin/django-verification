@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Bugfix 0.3.1
+------------
+
+UsernameKeyGenerator now actually works.
+
 Release 0.3
 -----------
 
