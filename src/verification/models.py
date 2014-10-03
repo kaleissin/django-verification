@@ -2,11 +2,13 @@ from __future__ import unicode_literals
 
 from datetime import timedelta
 
+from django.dispatch import receiver
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now as tznow
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models.signals import post_save
 from django.db.models.query import QuerySet
 
 from verification.signals import key_claimed
@@ -177,14 +179,6 @@ class AbstractKey(models.Model):
         "Show info about a key"
         return  '%s (%s) %s (<= %s)' % (self.key, self.group, self.pub_date, self.expires)
 
-    def save(self, *args, **kwargs):
-        "Save key and set ttl if the group has it"
-        super(AbstractKey, self).save(*args, **kwargs)
-        if self.group.ttl:
-            add_minutes = timedelta(minutes=self.group.ttl)
-            self.expires = self.pub_date + add_minutes
-            super(AbstractKey, self).save(*args, **kwargs)
-
     def clean(self):
         """Verify that facts is filled if the group demands it"""
         if self.group.has_fact == True and not self.fact:
@@ -206,6 +200,13 @@ class AbstractKey(models.Model):
         if callable(self.send_func):
             return self.send_func(*args, **kwargs)
         raise TypeError('Key.send_func is not a callable')
+
+@receiver(post_save, sender=AbstractKey)
+def populate_ttl(sender, **kwargs):
+    if (kwargs['created'] and sender.group.ttl):
+        add_minutes = timedelta(minutes=sender.group.ttl)
+        sender.expires = sender.pub_date + add_minutes
+        sender.save()
 
 class Key(AbstractKey):
     """Standard key, claimable by AUTH_USER_MODEL"""
