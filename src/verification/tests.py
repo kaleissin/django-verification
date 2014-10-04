@@ -6,10 +6,11 @@ import datetime
 import unittest
 
 from django.core.urlresolvers import resolve, reverse
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django import test
 from django.http import HttpRequest
+from django.utils.timezone import now as tznow
+from django.contrib.auth import get_user_model
 
 from verification.models import *
 from verification.views import *
@@ -196,14 +197,14 @@ class KeyTest(test.TestCase):
         self.kg_ttl = KeyGroup.objects.create(name='ttl', ttl=5, generator='pin')
 
     def test_expired(self):
-        now = datetime.datetime.now()
+        now = tznow()
         earlier = now - datetime.timedelta(minutes=5)
         k = Key.objects.create(group=self.kg_sms, expires=earlier)
         expired_keys = Key.objects.expired()
         self.assertEqual(k, expired_keys[0])
 
     def test_delete_expired(self):
-        now = datetime.datetime.now()
+        now = tznow()
         earlier = now - datetime.timedelta(minutes=5)
         k = Key.objects.create(group=self.kg_sms, expires=earlier)
         Key.objects.delete_expired()
@@ -211,13 +212,13 @@ class KeyTest(test.TestCase):
         self.assertFalse(expired_keys)
 
     def test_claimed(self):
-        now = datetime.datetime.now()
+        now = tznow()
         k = Key.objects.create(group=self.kg_sms, claimed=now)
         claimed_keys = Key.objects.claimed()
         self.assertEqual(k, claimed_keys[0])
 
     def test_available(self):
-        now = datetime.datetime.now()
+        now = tznow()
         earlier = now - datetime.timedelta(minutes=5+random.randint(0, 200))
         later = now + datetime.timedelta(minutes=5+random.randint(0, 200))
         k1 = Key.objects.create(key='1', group=self.kg_sms, claimed=now)
@@ -230,7 +231,7 @@ class KeyTest(test.TestCase):
         self.assertEqual(set(Key.objects.available()), set((k4, k6)))
 
     def test_pprint(self):
-        now = datetime.datetime.now()
+        now = tznow()
         k = Key.objects.create(key='PPRint', group=self.kg_sms, pub_date=now)
         pub_date = k.pub_date
         simple = k.pprint()
@@ -250,7 +251,17 @@ class KeyTest(test.TestCase):
         k4 = Key.objects.create(key='4', group=self.kg_fact, fact='boo')
         self.assertEqual(k4.clean(), None)
 
-    def test_save(self):
+    def test_save_pub_date_set(self):
+        k1 = Key(key='1', group=self.kg_sms)
+        k1.save()
+        first_pub_date = k1.pub_date
+        self.assertIsNotNone(k1.pub_date)
+        k1.group = self.kg_ttl
+        k1.save()
+        second_pub_date = k1.pub_date
+        self.assertEqual(first_pub_date, second_pub_date)
+
+    def test_save_ttl_set(self):
         k1 = Key(key='1', group=self.kg_sms)
         k1.save()
         self.assertIsNone(k1.expires)
@@ -321,7 +332,7 @@ class ClaimTest(test.TestCase):
         self.assertRaises(VerificationError, claim, '1', self.user)
 
     def test_claim_expired(self):
-        now = datetime.datetime.now()
+        now = tznow()
         earlier = now - datetime.timedelta(minutes=5+random.randint(0, 200))
         k1 = Key.objects.create(key='1', group=self.kg, expires=earlier)
         self.assertRaises(VerificationError, claim, '1', self.user)

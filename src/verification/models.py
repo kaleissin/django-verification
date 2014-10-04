@@ -159,7 +159,7 @@ class AbstractKey(models.Model):
     key = models.CharField(unique=True, max_length=255)
     group = models.ForeignKey(KeyGroup)
     fact = models.TextField(blank=True, null=True)
-    pub_date = models.DateTimeField(auto_now_add=True)
+    pub_date = models.DateTimeField(default=tznow, editable=False, blank=True)
     expires = models.DateTimeField(blank=True, null=True)
     claimed = models.DateTimeField(blank=True, null=True)
 
@@ -179,11 +179,13 @@ class AbstractKey(models.Model):
 
     def save(self, *args, **kwargs):
         "Save key and set ttl if the group has it"
+        now = tznow()
+        if not self.pk:
+            self.pub_date = now
+            if self.group.ttl:
+                add_minutes = timedelta(minutes=self.group.ttl)
+                self.expires = self.pub_date + add_minutes
         super(AbstractKey, self).save(*args, **kwargs)
-        if self.group.ttl:
-            add_minutes = timedelta(minutes=self.group.ttl)
-            self.expires = self.pub_date + add_minutes
-            super(AbstractKey, self).save(*args, **kwargs)
 
     def clean(self):
         """Verify that facts is filled if the group demands it"""
