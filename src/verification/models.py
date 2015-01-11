@@ -50,16 +50,16 @@ class KeyMixin(object):
     def expired(self):
         "Get keys that have expired"
         now = tznow()
-        return self.get_query_set().exclude(expires=None).filter(expires__lte=now)
+        return self.get_queryset().exclude(expires=None).filter(expires__lte=now)
 
     def available(self):
         "Get still available keys"
         now = tznow()
-        return self.get_query_set().filter(Q(expires__gt=now)|Q(expires=None)).filter(claimed=None)
+        return self.get_queryset().filter(Q(expires__gt=now)|Q(expires=None)).filter(claimed=None)
 
     def claimed(self):
         "Get claimed keys"
-        return self.get_query_set().exclude(claimed=None)
+        return self.get_queryset().exclude(claimed=None)
 
     def delete_expired(self):
         """Removes expired keys"""
@@ -74,7 +74,7 @@ class KeyQuerySet(QuerySet, KeyMixin):
 
 class KeyManager(models.Manager, KeyMixin):
 
-    def get_query_set(self):
+    def get_queryset(self):
         return KeyQuerySet(self.model, using=self._db)
 
 @python_2_unicode_compatible
