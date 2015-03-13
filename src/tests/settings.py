@@ -12,6 +12,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'verification',
     'demo.projectapp',
+    'tests',
 ]
 
 MIDDLEWARE_CLASSES = ()

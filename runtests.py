@@ -5,19 +5,16 @@ from __future__ import unicode_literals
 import os
 import sys
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'verification.tests.settings'
-sys.path.append('./src')
+sys.path.insert(1, os.path.abspath(b'./src'))
 
+import django
 from django.conf import settings
 from django.test.utils import get_runner
 
 if __name__ == "__main__":
-    try: # Django 1.7+
-        from django import setup
-        setup()
-    except ImportError:
-        pass
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
+    django.setup()
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
-    failures = test_runner.run_tests(["verification"])
+    failures = test_runner.run_tests(["tests"])
     sys.exit(bool(failures))
