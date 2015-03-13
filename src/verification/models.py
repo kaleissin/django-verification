@@ -75,6 +75,7 @@ class KeyGroup(models.Model):
     ttl       - Time to live. A generated key will have "expires" set to
                 "pub_date" + "ttl", or will not expire of ttl is None
     generator - The name of a key generator
+    has_fact  - Whether Key.fact must be set
     """
     name = models.SlugField(max_length=32, primary_key=True)
     ttl = models.IntegerField('Time to live, in minutes', blank=True, null=True)
@@ -116,7 +117,7 @@ class AbstractKey(models.Model):
     claimed     - When the key was claimed
 
     Subclass this if keys are to be claimed by another model than AUTH_USER_MODEL.
-    
+
     Something like this:
 
         class YourSpecialKey(AbstractKey):
