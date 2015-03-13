@@ -14,9 +14,7 @@ from verification.generators import registry as generators
 
 __all__ = [
     'VerificationError', 
-    'KeyManager',
     'KeyQuerySet',
-    'KeyMixin',
     'KeyGroup',
     'AbstractKey',
     'claim',
@@ -45,21 +43,21 @@ def claim(keystring, claimant):
     key_claimed.send_robust(sender=key, claimant=claimant, group=key.group)
     return key
 
-class KeyMixin(object):
+class KeyQuerySet(QuerySet):
 
     def expired(self):
         "Get keys that have expired"
         now = tznow()
-        return self.get_queryset().exclude(expires=None).filter(expires__lte=now)
+        return self.exclude(expires=None).filter(expires__lte=now)
 
     def available(self):
         "Get still available keys"
         now = tznow()
-        return self.get_queryset().filter(Q(expires__gt=now)|Q(expires=None)).filter(claimed=None)
+        return self.filter(Q(expires__gt=now)|Q(expires=None)).filter(claimed=None)
 
     def claimed(self):
         "Get claimed keys"
-        return self.get_queryset().exclude(claimed=None)
+        return self.exclude(claimed=None)
 
     def delete_expired(self):
         """Removes expired keys"""
@@ -69,13 +67,6 @@ class KeyMixin(object):
     def claim(self, *args):
         return claim(*args)
 
-class KeyQuerySet(QuerySet, KeyMixin):
-    pass
-
-class KeyManager(models.Manager, KeyMixin):
-
-    def get_queryset(self):
-        return KeyQuerySet(self.model, using=self._db)
 
 @python_2_unicode_compatible
 class KeyGroup(models.Model):
@@ -131,15 +122,15 @@ class AbstractKey(models.Model):
         class YourSpecialKey(AbstractKey):
             claimed_by = models.ForeignKey('yourapp.yourmodel', blank=True, null=True)
 
-            objects = KeyManager()
+            objects = KeyQuerySet.as_manager()
 
     If you need to do more than just setting claimed_by to the correct
     yourapp.yourmodel-instance when claiming:
 
     1. Write your own claim()-function (it can call the existing claim()-function)
-    2. Subclass the KeyManager to call your claim-function::
+    2. Subclass the KeyQuerySet to call your claim-function::
 
-        class YourSpecialKeyManager(Keymanager):
+        class YourSpecialKeyQuerySet(KeyQuerySet):
 
             def claim(self, *args):
                 return yourclaim(*args)
@@ -149,7 +140,7 @@ class AbstractKey(models.Model):
         class YourSpecialKey(AbstractKey):
             claimed_by = models.ForeignKey('yourapp.yourmodel', blank=True, null=True)
 
-            objects = YourSpecialKeyManager()
+            objects = YourSpecialKeyQuerySet.as_manager()
 
             def claim(self, your_args):
                 return claim(self.key, yourargs)
@@ -163,7 +154,7 @@ class AbstractKey(models.Model):
     expires = models.DateTimeField(blank=True, null=True)
     claimed = models.DateTimeField(blank=True, null=True)
 
-    objects = KeyManager()
+    objects = KeyQuerySet.as_manager()
 
     class Meta:
         abstract = True
@@ -213,4 +204,4 @@ class Key(AbstractKey):
     """Standard key, claimable by AUTH_USER_MODEL"""
     claimed_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='verification_keys')
 
-    objects = KeyManager()
+    objects = KeyQuerySet.as_manager()
