@@ -1,10 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.views.generic import CreateView, DeleteView
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django import forms
 from django.dispatch import receiver
+from django.contrib.auth import get_user_model
 
 from verification.signals import key_claimed
 from verification.models import KeyGroup, Key
@@ -25,7 +25,7 @@ def send_verification_email(recipient, content):
 
 class UserForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ['email']
 
 class PasswordForm(forms.Form):
@@ -39,7 +39,7 @@ class PasswordForm(forms.Form):
         raise forms.ValidationError('The passwords didn\'t match')
 
 class DeleteUser(DeleteView):
-    model = User
+    model = get_user_model()
     success_url = '/'
 
     def get_object(self, queryset=None):
@@ -55,7 +55,7 @@ class DeleteUser(DeleteView):
 delete_user = DeleteUser.as_view()
 
 class AbstractCreateUser(CreateView):
-    model = User
+    model = get_user_model()
     form_class = UserForm
     success_url = '/'
     create_url = 'login'
