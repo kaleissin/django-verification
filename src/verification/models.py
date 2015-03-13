@@ -99,7 +99,7 @@ class KeyGroup(models.Model):
 
     def purge_keys(self):
         "Delete all keys belonging to this group"
-        model = self.key_set.model
+        model = self.keys.model
         model.objects.filter(group=self).delete()
 
     def generate_one_key(self, keycls, seed=None, fact=None, *args):
@@ -157,7 +157,7 @@ class AbstractKey(models.Model):
     send_func = None
 
     key = models.CharField(unique=True, max_length=255)
-    group = models.ForeignKey(KeyGroup)
+    group = models.ForeignKey(KeyGroup, related_name='keys')
     fact = models.TextField(blank=True, null=True)
     pub_date = models.DateTimeField(default=tznow, editable=False, blank=True)
     expires = models.DateTimeField(blank=True, null=True)

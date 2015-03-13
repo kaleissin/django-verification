@@ -168,7 +168,7 @@ class KeyGroupTest(test.TestCase):
         self.assertIsNone(kg.get_generator())
 
     def test_purge_keys(self):
-        model = self.kg_sms.key_set.model
+        model = self.kg_sms.keys.model
         for i in range(5):
             model.generate(self.kg_sms)
         for i in range(5):
