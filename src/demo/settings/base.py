@@ -81,3 +81,12 @@ INSTALLED_APPS = [
     'verification',
     'demo.projectapp',
 ]
+
+MIDDLEWARE_CLASSES = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
