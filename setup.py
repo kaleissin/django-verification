@@ -10,7 +10,7 @@ finally:
     README_FILE.close()
 
 setup(name='django-verification',
-        version='0.3.1',
+        version='0.4.0',
         packages=['verification'],
         package_dir = {'': 'src',},
         include_package_data=True,
@@ -21,6 +21,7 @@ setup(name='django-verification',
         author='kaleissin',
         url='https://github.com/kaleissin/django-verification',
         long_description=long_description,
+        install_requires=['Django>=1.7'],
         classifiers=[
                 'Development Status :: 4 - Beta',
                 'Environment :: Web Environment',

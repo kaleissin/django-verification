@@ -1,6 +1,24 @@
 Changelog
 =========
 
+Release 0.4
+-----------
+
+Works with, and needs, Django 1.7+.
+
+Changes:
+
+- KeyManager is generated from the queryset as per Django 1.7 now. This
+  also shuts up the warning "RemovedInDjango18Warning:
+  `KeyManager.get_query_set` method should be renamed `get_queryset`."
+- Migrations are supported.
+- Supports the new application-definition of Django 1.7, meaning
+  multiple copies and renames of an app is possible.
+
+Renames/moves:
+
+- KeyGroup.key_set -> KeyGroup.keys
+
 Bugfix 0.3.1
 ------------
 

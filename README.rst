@@ -15,11 +15,16 @@ Installation
 
     INSTALLED_APPS += ['verification']
 
-3. Add the tables to the existing project.
+3. Add the tables to the existing project::
 
-   Prior to django 1.7::
+    python manage.py migrate verification
 
-        $ ./manage.py syncdb
+Upgrade
+=======
+
+To 0.4 (needs Django 1.7+)::
+
+    python manage.py migrate --fake verification 0001_initial
 
 Demo
 ====
@@ -112,4 +117,4 @@ Hook the ``key_claimed``-signal in order to do something after the key is claime
         claimant.is_active = True
         claimant.save()
 
-:Version: 0.3.1
+:Version: 0.4.0
