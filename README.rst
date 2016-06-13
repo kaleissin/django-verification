@@ -22,7 +22,7 @@ Installation
 Upgrade
 =======
 
-To 0.4 (needs Django 1.7+)::
+To 0.4.1 (needs Django 1.7+)::
 
     python manage.py migrate --fake verification 0001_initial
 
