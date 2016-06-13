@@ -2,9 +2,10 @@
 *.pyo
 *.swp
 *.sqlite
+*.egg-info
 *~
 .coverage
-htmlcov
 .tox
-*.egg-info
+htmlcov
 dist
+build
