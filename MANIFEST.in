@@ -1,1 +1,2 @@
 recursive-include src/verification/templates *
+recursive-include src/verification/migrations *
