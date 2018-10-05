@@ -193,7 +193,7 @@ def reset():
         name = generator.name
         registry.register(name, generator)
         DEFAULT_GENERATOR_NAMES.append(name)
-    for generator in registry.available():
+    for generator in list(registry.available()):
         if not generator in DEFAULT_GENERATOR_NAMES:
             registry.unregister(generator)
 
