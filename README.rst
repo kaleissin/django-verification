@@ -4,6 +4,8 @@ django-verification
 
 Generalized app for two-step verification.
 
+Supports Python 2.7, 3.5, 3.6, 3.7; Django 1.8 and Django 1.11.
+
 Installation
 ============
 
@@ -117,4 +119,4 @@ Hook the ``key_claimed``-signal in order to do something after the key is claime
         claimant.is_active = True
         claimant.save()
 
-:Version: 0.4.1
+:Version: 0.5.0
