@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import os
 import sys
 
-sys.path.insert(1, os.path.abspath(b'./src'))
+sys.path.insert(1, os.path.abspath(u'./src'))
 
 import django
 from django.conf import settings

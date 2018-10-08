@@ -3,7 +3,13 @@ from __future__ import unicode_literals
 import random
 import hashlib
 import datetime
+import sys
 import unittest
+try:
+    from unittest import mock
+except:
+    # Python 2
+    import mock
 
 from django.core.urlresolvers import resolve, reverse
 from django.core.exceptions import ValidationError
@@ -25,6 +31,14 @@ from verification.generators import (
     SAFE_ALPHABET,
     SHORT_LENGTH,
 )
+
+
+PY3 = sys.version_info > (3,)
+
+
+# Python2 str() and Python3 str() rounds floats differently which leads to
+# different hashes, ergo python version dependent asserts in some cases.
+
 
 class RegistryTest(unittest.TestCase):
 
@@ -126,10 +140,13 @@ class AbstractAlphabetKeyGeneratorTest(unittest.TestCase):
         badkey = 'abc"123'
         self.assertFalse(gen.valid_key(badkey))
 
-    def test_generate_one_key(self):
-        seed = 12345
-        expected_key = 'Aa1txnLk'
-        gen = AbstractAlphabetKeyGenerator(seed=seed)
+    @mock.patch('random.random')
+    def test_generate_one_key(self, rand_call):
+        rand_call.return_value = 0.987654321
+        expected_key = 'BWa221u4'
+        if not PY3:
+            expected_key = 'Aa1txnLk'
+        gen = AbstractAlphabetKeyGenerator(seed=12345)
         key = gen.generate_one_key()
         self.assertEqual(expected_key, key)
 
@@ -142,14 +159,15 @@ class HashedHexKeyGeneratorTest(unittest.TestCase):
         self.assertEqual(gen.base, 16)
         self.assertEqual(gen.alphabet, SAFE_ALPHABET[:16])
 
-    def test_generate_one_key(self):
-        seed = 12345
-        expected_key = '2b5389d4a96d6f5c03cbbf9b46d56cf0297d9ffd'
-        gen = HashedHexKeyGenerator(seed=seed)
+    @mock.patch('random.random')
+    def test_generate_one_key(self, rand_call):
+        rand_call.return_value = 0.987654321
+        expected_key = '228fd0f62a984ce3c1be4efa031fb9b6842ff4ed'
+        gen = HashedHexKeyGenerator()
         key = gen.generate_one_key()
         self.assertEqual(expected_key, key)
         key = gen.generate_one_key('fii')
-        expected_key = '98397f5b411802bac598c3f0a19cd7c3063461ca'
+        expected_key = 'b99f2ff8fc8d709e2a2b3c85e23ade15e2b3a296'
         self.assertEqual(expected_key, key)
 
 class KeyGroupTest(test.TestCase):
@@ -179,14 +197,24 @@ class KeyGroupTest(test.TestCase):
                          set(model.objects.filter(group=self.kg_pin)))
         self.assertEqual(model.objects.count(), 5)
 
-    def test_generate_one_key(self):
+    @mock.patch('random.random')
+    def test_generate_one_key(self, rand_call):
+        rand_call.return_value = 0.987654321
         k = self.kg_sms.generate_one_key(Key, seed=12345)
-        self.assertEqual(k.key, 'Aa1txnLk')
+        expected_key = 'BWa221u4'
+        if not PY3:
+            expected_key = 'Aa1txnLk'
+        self.assertEqual(k.key, expected_key)
 
-    def test_generate_one_key_with_fact(self):
+    @mock.patch('random.random')
+    def test_generate_one_key_with_fact(self, rand_call):
+        rand_call.return_value = 0.987654321
         fact = 'this is a test'
-        k = self.kg_sms.generate_one_key(Key, seed=12345, fact=fact)
-        self.assertEqual(k.key, 'Aa1txnLk')
+        k = self.kg_sms.generate_one_key(Key, fact=fact, seed=12345)
+        expected_key = 'BWa221u4'
+        if not PY3:
+            expected_key = 'Aa1txnLk'
+        self.assertEqual(k.key, expected_key)
         self.assertEqual(k.fact, fact)
 
 class KeyTest(test.TestCase):
@@ -298,15 +326,25 @@ class KeyTest(test.TestCase):
         self.assertEqual(k_claimed.claimed_by, u)
         self.assertTrue(k_claimed.claimed)
 
-    def test_generate(self):
+    @mock.patch('random.random')
+    def test_generate(self, rand_call):
+        rand_call.return_value = 0.987654321
         k = Key.generate(group=self.kg_sms, seed=12345)
-        self.assertEqual(k.key, 'Aa1txnLk')
+        expected_key = 'BWa221u4'
+        if not PY3:
+            expected_key = 'Aa1txnLk'
+        self.assertEqual(k.key, expected_key)
         self.assertEqual(k.group, self.kg_sms)
 
-    def test_generate_with_fact(self):
+    @mock.patch('random.random')
+    def test_generate_with_fact(self, rand_call):
+        rand_call.return_value = 0.987654321
         fact = 'this is a test'
         k = Key.generate(group=self.kg_sms, seed=12345, fact=fact)
-        self.assertEqual(k.key, 'Aa1txnLk')
+        expected_key = 'BWa221u4'
+        if not PY3:
+            expected_key = 'Aa1txnLk'
+        self.assertEqual(k.key, expected_key)
         self.assertEqual(k.group, self.kg_sms)
         self.assertEqual(k.fact, fact)
 

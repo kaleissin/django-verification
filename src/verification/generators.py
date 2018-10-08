@@ -6,6 +6,10 @@ import hashlib
 import random
 import re
 import string
+import sys
+
+
+PY3 = sys.version_info > (3,)
 
 # Some chars are hard to tell apart in some phone-fonts:
 # 1 vs. l vs. I
@@ -116,12 +120,17 @@ class HashedHexKeyGenerator(AbstractAlphabetKeyGenerator):
             self.alphabet = self.alphabet[:16]
 
     def generate_one_key(self, *args):
-        super(HashedHexKeyGenerator, self).generate_one_key(*args)
         if not args:
             args = [self.random.random()]
         args = [str(arg) for arg in args]
-        salt = self.hasher(str(self.random.random())).hexdigest()[:5]
-        return self.hasher(salt+''.join(args)).hexdigest()
+        if PY3:
+            saltbase = str(self.random.random()).encode('ascii')
+            salt = self.hasher(saltbase).hexdigest()[:5]
+            hashbase = salt + u''.join(args)
+            return self.hasher(hashbase.encode('ascii')).hexdigest()
+        else:
+            salt = self.hasher(str(self.random.random())).hexdigest()[:5]
+            return self.hasher(salt+''.join(args)).hexdigest()
 
 class MD5HexKeyGenerator(HashedHexKeyGenerator):
     name = 'md5-hex'
