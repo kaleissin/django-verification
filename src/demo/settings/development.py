@@ -1,4 +1,5 @@
 from .base import *
 
 
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = True
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG

@@ -11,10 +11,14 @@ from verification.models import KeyGroup, Key
 from verification.views import AbstractClaimOnPostFormView
 from verification.views import AbstractClaimView
 
-activate_account, _ = KeyGroup.objects.get_or_create(
-    name='activate_account',
-    generator='md5-hex',
-    ttl=60)
+
+def create_activate_account_kg():
+    activate_account, _ = KeyGroup.objects.get_or_create(
+        name='activate_account',
+        generator='md5-hex',
+        ttl=60)
+    return activate_account
+
 
 def send_verification_email(recipient, content):
     "send_func to be used by verification.Key"
@@ -113,6 +117,7 @@ The link times out in one hour.'''
         self.object.is_active = False
         self.object.username = email
         self.object.save()
+        activate_account = create_activate_account_kg()
         key = Key.generate(activate_account)
         key.send_func = send_verification_email
         key.claimed_by = self.object
