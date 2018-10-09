@@ -17,7 +17,7 @@ DJANGO_POSTFIX := --settings=$(DJANGO_SETTINGS_MODULE) --pythonpath=$(PYTHONPATH
 DJANGO_TEST_POSTFIX := --settings=$(DJANGO_TEST_SETTINGS_MODULE) --pythonpath=$(PYTHONPATH)
 PYTHON_BIN := $(VIRTUAL_ENV)/bin
 
-.PHONY: all bootstrap clean collectstatic compare coverage demo load_demo_fixtures pip predeploy refresh register rsync runserver_unsafe sdist showenv showenv.all showenv.site showenv.virtualenv test upload virtualenv virtual_env_set
+.PHONY: all bootstrap clean collectstatic compare coverage demo load_demo_fixtures pip predeploy refresh rsync runserver_unsafe sdist showenv showenv.all showenv.site showenv.virtualenv test upload virtualenv virtual_env_set
 
 .DEFAULT: virtual_env_set
 	$(PYTHON_BIN)/django-admin.py $@ $(FLAGS) $(DJANGO_POSTFIX)
@@ -75,9 +75,6 @@ coverage: virtual_env_set
 
 predeploy: test
 
-register: virtual_env_set
-	python setup.py register
-
 sdist: virtual_env_set
 	python setup.py sdist
 
@@ -98,7 +95,7 @@ load_demo_fixtures:
 	$(PYTHON_BIN)/django-admin.py loaddata $(PYTHONPATH)/$(PROJECT)/fixtures/example.json $(DJANGO_POSTFIX)
 
 demodatabase: clean virtual_env_set
-	$(PYTHON_BIN)/django-admin.py syncdb --noinput $(DJANGO_POSTFIX)
+	$(PYTHON_BIN)/django-admin.py migrate $(DJANGO_POSTFIX)
 
 resetdemodatabase: demodatabase load_demo_fixtures
 
