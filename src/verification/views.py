@@ -4,7 +4,10 @@ import logging
 _LOG = logging.getLogger(__name__)
 
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:   # Django < 1.9
+    from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic.base import ContextMixin
 from django.views.generic import TemplateView, FormView, View

@@ -121,7 +121,12 @@ class AbstractKey(models.Model):
     Something like this:
 
         class YourSpecialKey(AbstractKey):
-            claimed_by = models.ForeignKey('yourapp.yourmodel', blank=True, null=True)
+            claimed_by = models.ForeignKey(
+                'yourapp.yourmodel',
+                on_delete=models.CASCADE,
+                blank=True,
+                null=True
+            )
 
             objects = KeyQuerySet.as_manager()
 
@@ -139,7 +144,12 @@ class AbstractKey(models.Model):
     3. Replace the claim-method on the YourSpecialKey-class and add in your own manager::
 
         class YourSpecialKey(AbstractKey):
-            claimed_by = models.ForeignKey('yourapp.yourmodel', blank=True, null=True)
+            claimed_by = models.ForeignKey(
+                'yourapp.yourmodel',
+                on_delete=models.CASCADE,
+                blank=True,
+                null=True
+            )
 
             objects = YourSpecialKeyQuerySet.as_manager()
 
@@ -149,7 +159,7 @@ class AbstractKey(models.Model):
     send_func = None
 
     key = models.CharField(unique=True, max_length=255)
-    group = models.ForeignKey(KeyGroup, related_name='keys')
+    group = models.ForeignKey(KeyGroup, on_delete=models.CASCADE, related_name='keys')
     fact = models.TextField(blank=True, null=True)
     pub_date = models.DateTimeField(default=tznow, editable=False, blank=True)
     expires = models.DateTimeField(blank=True, null=True)
@@ -203,6 +213,6 @@ class AbstractKey(models.Model):
 
 class Key(AbstractKey):
     """Standard key, claimable by AUTH_USER_MODEL"""
-    claimed_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name='verification_keys')
+    claimed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='verification_keys')
 
     objects = KeyQuerySet.as_manager()
