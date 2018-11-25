@@ -1,6 +1,27 @@
 Changelog
 =========
 
+
+Release 0.5.2
+-------------
+
+Final release with support for Python 2 and Django < 1.11.
+
+Release 0.5.1
+-------------
+
+Adaptations to new pypi and newer setuptools and packaging regime.
+
+The demo should also run on newer Djangos and Py3K now.
+
+Release 0.5
+-----------
+
+Drops support for Django 1.7.
+
+Needs Django 1.8 or newer, up to Django 1.11. Works on both Python
+2.7, 3.5 and 3.6.
+
 Release 0.4
 -----------
 
