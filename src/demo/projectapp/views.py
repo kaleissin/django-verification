@@ -1,4 +1,7 @@
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:   # Django < 1.9
+    from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.views.generic import CreateView, DeleteView
 from django.core.mail import send_mail

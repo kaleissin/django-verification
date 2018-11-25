@@ -17,4 +17,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE_CLASSES = ()
 
-ROOT_URLCONF = 'demo.urls'
+ROOT_URLCONF = 'tests.urls'
+
+STATIC_ROOT = './static-root'
+STATIC_URL = "/static/"

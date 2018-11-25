@@ -11,7 +11,11 @@ except:
     # Python 2
     import mock
 
-from django.core.urlresolvers import resolve, reverse
+import django
+try:
+    from django.urls import resolve, reverse
+except ImportError:   # Django < 1.9
+    from django.core.urlresolvers import resolve, reverse
 from django.core.exceptions import ValidationError
 from django import test
 from django.http import HttpRequest
@@ -377,6 +381,8 @@ class ClaimTest(test.TestCase):
 
 class AdminTest(unittest.TestCase):
 
+    @unittest.skipIf(django.VERSION > (2, 0),
+                     "not supported in this version of django")
     def test_all_defined(self):
         try:
             import verification.admin
