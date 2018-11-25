@@ -10,7 +10,7 @@ finally:
     README_FILE.close()
 
 setup(name='django-verification',
-        version='0.5.1',
+        version='0.5.2',
         packages=['verification'],
         package_dir = {'': 'src',},
         include_package_data=True,
@@ -38,6 +38,5 @@ setup(name='django-verification',
                 'Programming Language :: Python :: 3',
                 'Programming Language :: Python :: 3.5',
                 'Programming Language :: Python :: 3.6',
-                'Programming Language :: Python :: 3.7',
         ]
 )
