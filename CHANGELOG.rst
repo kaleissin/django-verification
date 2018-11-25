@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Release 1.0.0
+-------------
+
+Drops support for Python 2 and Django < 1.11.
+
+Adds support for Django 2.0 and 2.1.
+
+Shims have not been removed, but if this works on Python 2.7 or
+Django < 1.11 it is considered a bug, not a feature.
 
 Release 0.5.2
 -------------
