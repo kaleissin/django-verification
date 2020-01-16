@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Release 1.1.0
+-------------
+
+Adds support for Django 2.2.
+
 Release 1.0.0
 -------------
 
