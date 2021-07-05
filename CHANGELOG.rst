@@ -1,10 +1,23 @@
 Changelog
 =========
 
+Release 1.2.0
+-------------
+
+Adds support for Django 3.2
+
+Drops support for Django 2.2 or older, as well as Python 3.5 or older.
+
+Shims to support Python 2.x and Django < 3.2 have been removed.
+
+Sundry modernizing of package building and testing.
+
 Release 1.1.0
 -------------
 
 Adds support for Django 2.2.
+
+Last version to support Django 1.11.
 
 Release 1.0.0
 -------------
