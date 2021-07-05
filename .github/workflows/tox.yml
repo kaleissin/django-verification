@@ -19,12 +19,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/
-
     - name: Install dependencies
       run: |
         set -xe
@@ -35,7 +29,9 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        python -m tox -e flake8-critical
+        pip install flake8
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/
 
     - name: Test with tox
       run: |
