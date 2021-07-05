@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from datetime import timedelta
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
+from six import python_2_unicode_compatible
 from django.utils.timezone import now as tznow
 from django.conf import settings
 from django.core.exceptions import ValidationError
