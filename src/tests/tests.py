@@ -5,17 +5,9 @@ import hashlib
 import datetime
 import sys
 import unittest
-try:
-    from unittest import mock
-except:
-    # Python 2
-    import mock
+from unittest import mock
 
-import django
-try:
-    from django.urls import resolve, reverse
-except ImportError:   # Django < 1.9
-    from django.core.urlresolvers import resolve, reverse
+from django.urls import resolve, reverse
 from django.core.exceptions import ValidationError
 from django import test
 from django.http import HttpRequest
@@ -35,13 +27,6 @@ from verification.generators import (
     SAFE_ALPHABET,
     SHORT_LENGTH,
 )
-
-
-PY3 = sys.version_info > (3,)
-
-
-# Python2 str() and Python3 str() rounds floats differently which leads to
-# different hashes, ergo python version dependent asserts in some cases.
 
 
 class RegistryTest(unittest.TestCase):
@@ -86,6 +71,7 @@ class RegistryTest(unittest.TestCase):
         registry.reset()
         self.assertEqual(set(registry.available()), set(expected))
 
+
 class AbstractKeyGeneratorTest(unittest.TestCase):
 
     def tearDown(self):
@@ -128,6 +114,7 @@ class AbstractKeyGeneratorTest(unittest.TestCase):
         gen.unregister()
         self.assertRaises(GeneratorError, registry.get, 'abstract')
 
+
 class AbstractAlphabetKeyGeneratorTest(unittest.TestCase):
 
     def test_init(self):
@@ -148,11 +135,10 @@ class AbstractAlphabetKeyGeneratorTest(unittest.TestCase):
     def test_generate_one_key(self, rand_call):
         rand_call.return_value = 0.987654321
         expected_key = 'BWa221u4'
-        if not PY3:
-            expected_key = 'Aa1txnLk'
         gen = AbstractAlphabetKeyGenerator(seed=12345)
         key = gen.generate_one_key()
         self.assertEqual(expected_key, key)
+
 
 class HashedHexKeyGeneratorTest(unittest.TestCase):
 
@@ -173,6 +159,7 @@ class HashedHexKeyGeneratorTest(unittest.TestCase):
         key = gen.generate_one_key('fii')
         expected_key = 'b99f2ff8fc8d709e2a2b3c85e23ade15e2b3a296'
         self.assertEqual(expected_key, key)
+
 
 class KeyGroupTest(test.TestCase):
 
@@ -206,8 +193,6 @@ class KeyGroupTest(test.TestCase):
         rand_call.return_value = 0.987654321
         k = self.kg_sms.generate_one_key(Key, seed=12345)
         expected_key = 'BWa221u4'
-        if not PY3:
-            expected_key = 'Aa1txnLk'
         self.assertEqual(k.key, expected_key)
 
     @mock.patch('random.random')
@@ -216,10 +201,9 @@ class KeyGroupTest(test.TestCase):
         fact = 'this is a test'
         k = self.kg_sms.generate_one_key(Key, fact=fact, seed=12345)
         expected_key = 'BWa221u4'
-        if not PY3:
-            expected_key = 'Aa1txnLk'
         self.assertEqual(k.key, expected_key)
         self.assertEqual(k.fact, fact)
+
 
 class KeyTest(test.TestCase):
 
@@ -335,8 +319,6 @@ class KeyTest(test.TestCase):
         rand_call.return_value = 0.987654321
         k = Key.generate(group=self.kg_sms, seed=12345)
         expected_key = 'BWa221u4'
-        if not PY3:
-            expected_key = 'Aa1txnLk'
         self.assertEqual(k.key, expected_key)
         self.assertEqual(k.group, self.kg_sms)
 
@@ -346,11 +328,10 @@ class KeyTest(test.TestCase):
         fact = 'this is a test'
         k = Key.generate(group=self.kg_sms, seed=12345, fact=fact)
         expected_key = 'BWa221u4'
-        if not PY3:
-            expected_key = 'Aa1txnLk'
         self.assertEqual(k.key, expected_key)
         self.assertEqual(k.group, self.kg_sms)
         self.assertEqual(k.fact, fact)
+
 
 class ClaimTest(test.TestCase):
 
@@ -379,15 +360,6 @@ class ClaimTest(test.TestCase):
         k1 = Key.objects.create(key='1', group=self.kg, expires=earlier)
         self.assertRaises(VerificationError, claim, '1', self.user)
 
-class AdminTest(unittest.TestCase):
-
-    @unittest.skipIf(django.VERSION > (2, 0),
-                     "not supported in this version of django")
-    def test_all_defined(self):
-        try:
-            import verification.admin
-        except (NameError, AssertionError) as e:
-            self.fail(e)
 
 class ClaimSuccessViewTest(test.TestCase):
 

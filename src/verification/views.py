@@ -74,7 +74,7 @@ class ClaimMixin(KeyLookupMixin):
         key = self.get_key_from_string(key, group)
         group = key.group
         user = self.request.user
-        if user.is_authenticated() and user.is_active:
+        if user.is_authenticated and user.is_active:
             # Logged in user claims key
             claimant = user
         elif key.claimed_by is not None:
