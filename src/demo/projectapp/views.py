@@ -50,7 +50,7 @@ class DeleteUser(DeleteView):
     success_url = '/'
 
     def get_object(self, queryset=None):
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             return self.request.user
         return None
 
