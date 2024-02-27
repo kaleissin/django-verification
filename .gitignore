@@ -1,11 +1,14 @@
+.*
+!.bumpversion.cfg
+!.github
+!.gitignore
+!.pre-commit-config.yaml
 *.pyc
 *.pyo
 *.swp
 *.sqlite
 *.egg-info
 *~
-.coverage
-.tox
 htmlcov
 dist
 build

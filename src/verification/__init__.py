@@ -1,1 +1,1 @@
-default_app_config = 'verification.apps.VerificationConfig'
+__version__ = "1.2.0"
