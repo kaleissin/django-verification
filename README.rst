@@ -121,4 +121,4 @@ Hook the ``key_claimed``-signal in order to do something after the key is claime
         claimant.is_active = True
         claimant.save()
 
-:Version: 1.2.0
+:Version: 1.3.0
