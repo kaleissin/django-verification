@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Release 1.3.1
+-------------
+
+Update README to mention supported python's and django's directly.
+
 Release 1.3.0
 -------------
 
